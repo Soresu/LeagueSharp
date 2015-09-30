@@ -296,7 +296,7 @@ namespace UnderratedAIO.Champions
         {
             config = new Menu("Garen", "Garen", true);
             // Target Selector
-            Menu menuTS = new Menu("Selector", "tselect");
+            Menu menuTS = new Menu("Target Selector", "tselect");
             TargetSelector.AddToMenu(menuTS);
             config.AddSubMenu(menuTS);
 
@@ -307,13 +307,13 @@ namespace UnderratedAIO.Champions
 
             // Draw settings
             Menu menuD = new Menu("Drawings ", "dsettings");
-            menuD.AddItem(new MenuItem("drawaa", "Draw AA range", true))
+            menuD.AddItem(new MenuItem("drawaa", "Draw AA Range", true))
                 .SetValue(new Circle(false, Color.FromArgb(180, 109, 111, 126)));
-            menuD.AddItem(new MenuItem("drawee", "Draw E range", true))
+            menuD.AddItem(new MenuItem("drawee", "Draw E Range", true))
                 .SetValue(new Circle(false, Color.FromArgb(180, 109, 111, 126)));
-            menuD.AddItem(new MenuItem("drawrr", "Draw R range", true))
+            menuD.AddItem(new MenuItem("drawrr", "Draw R Range", true))
                 .SetValue(new Circle(false, Color.FromArgb(180, 109, 111, 126)));
-            menuD.AddItem(new MenuItem("drawcombo", "Draw combo damage")).SetValue(true);
+            menuD.AddItem(new MenuItem("drawcombo", "Draw Combo-damage")).SetValue(true);
             config.AddSubMenu(menuD);
             // Combo Settings
             Menu menuC = new Menu("Combo ", "csettings");
@@ -321,12 +321,12 @@ namespace UnderratedAIO.Champions
             menuC.AddItem(new MenuItem("usew", "Use W", true)).SetValue(true);
             menuC.AddItem(new MenuItem("usee", "Use E", true)).SetValue(true);
             menuC.AddItem(new MenuItem("user", "Use R", true)).SetValue(true);
-            menuC.AddItem(new MenuItem("useFlash", "   Use Flash", true)).SetValue(true);
+            menuC.AddItem(new MenuItem("useFlash", "-- Use Flash to R", true)).SetValue(true);
             menuC.AddItem(new MenuItem("useIgnite", "Use Ignite")).SetValue(true);
             menuC = ItemHandler.addItemOptons(menuC);
             config.AddSubMenu(menuC);
             // LaneClear Settings
-            Menu menuLC = new Menu("LaneClear ", "Lcsettings");
+            Menu menuLC = new Menu("Lane Clear ", "Lcsettings");
             menuLC.AddItem(new MenuItem("useeLC", "Use E", true)).SetValue(true);
             config.AddSubMenu(menuLC);
             // Misc Settings
@@ -335,12 +335,12 @@ namespace UnderratedAIO.Champions
             menuM = Jungle.addJungleOptions(menuM);
 
 
-            Menu autolvlM = new Menu("AutoLevel", "AutoLevel");
+            Menu autolvlM = new Menu("Auto-Level", "AutoLevel");
             autoLeveler = new AutoLeveler(autolvlM);
             menuM.AddSubMenu(autolvlM);
 
             config.AddSubMenu(menuM);
-            var sulti = new Menu("TeamFight Ult block", "dontult");
+            var sulti = new Menu("Block R on X in Teamfights", "dontult");
             foreach (var hero in ObjectManager.Get<Obj_AI_Hero>().Where(hero => hero.IsEnemy))
             {
                 sulti.AddItem(new MenuItem("ult" + hero.SkinName, hero.SkinName, true)).SetValue(false);
