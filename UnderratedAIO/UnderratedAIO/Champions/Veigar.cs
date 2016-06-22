@@ -488,8 +488,7 @@ namespace UnderratedAIO.Champions
         {
             if (Program.IsSPrediction)
             {
-                E.SPredictionCastRing(target, 80, HitChance.High, edge);
-            }
+                E.SPredictionCastRing(t, 80, HitChance.High)
             else
             {
                 if (player.CountEnemiesInRange(E.Range + 175) <= 1)
