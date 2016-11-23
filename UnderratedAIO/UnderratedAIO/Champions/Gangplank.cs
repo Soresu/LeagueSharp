@@ -515,56 +515,53 @@ namespace UnderratedAIO.Champions
             {
                 return;
             }
-            if (config.Item("useqLC", true).GetValue<bool>())
+
+            var barrel =
+                GetBarrels()
+                    .FirstOrDefault(
+                        o =>
+                            o.IsValid && !o.IsDead && o.Distance(player) < Q.Range && o.SkinName == "GangplankBarrel" &&
+                            o.GetBuff("gangplankebarrellife").Caster.IsMe &&
+                            Environment.Minion.countMinionsInrange(o.Position, BarrelExplosionRange) >= 1);
+            if (barrel != null)
             {
-                var barrel =
-                    GetBarrels()
-                        .FirstOrDefault(
-                            o =>
-                                o.IsValid && !o.IsDead && o.Distance(player) < Q.Range &&
-                                o.SkinName == "GangplankBarrel" && o.GetBuff("gangplankebarrellife").Caster.IsMe &&
-                                Environment.Minion.countMinionsInrange(o.Position, BarrelExplosionRange) >= 1);
-                if (barrel != null)
+                var minis = MinionManager.GetMinions(
+                    barrel.Position, BarrelExplosionRange, MinionTypes.All, MinionTeam.NotAlly);
+                var Killable = minis.Where(e => Q.GetDamage(e) + ItemHandler.GetSheenDmg(e) >= e.Health && e.Health > 3);
+                if (Q.IsReady() && config.Item("useqLCQB", true).GetValue<bool>() && KillableBarrel(barrel) &&
+                    Killable.Any(t => HealthPrediction.LaneClearHealthPrediction(t, 1000) <= 0))
                 {
-                    var minis = MinionManager.GetMinions(
-                        barrel.Position, BarrelExplosionRange, MinionTypes.All, MinionTeam.NotAlly);
-                    var Killable =
-                        minis.Where(e => Q.GetDamage(e) + ItemHandler.GetSheenDmg(e) >= e.Health && e.Health > 3);
-                    if (Q.IsReady() && KillableBarrel(barrel) &&
-                        Killable.Any(t => HealthPrediction.LaneClearHealthPrediction(t, 1000) <= 0))
-                    {
-                        Q.CastOnUnit(barrel);
-                    }
-
-
-                    if (config.Item("ePrep", true).GetValue<bool>())
-                    {
-                        if (Q.IsReady() && minis.Count == Killable.Count() && KillableBarrel(barrel))
-                        {
-                            Q.CastOnUnit(barrel);
-                        }
-                        else
-                        {
-                            foreach (var m in
-                                minis.Where(
-                                    e => Q.GetDamage(e) + ItemHandler.GetSheenDmg(e) <= e.Health && e.Health > 3)
-                                    .OrderBy(t => t.Distance(player))
-                                    .ThenByDescending(t => t.Health))
-                            {
-                                orbwalker.ForceTarget(m);
-                                return;
-                            }
-                        }
-                    }
-                    else if (Q.IsReady() && KillableBarrel(barrel) &&
-                             minis.Count >= config.Item("eMinHit", true).GetValue<Slider>().Value)
-                    {
-                        Q.CastOnUnit(barrel);
-                    }
-
-                    return;
+                    Q.CastOnUnit(barrel);
                 }
+
+                if (config.Item("ePrep", true).GetValue<bool>())
+                {
+                    if (Q.IsReady() && config.Item("useqLCQB", true).GetValue<bool>() && minis.Count == Killable.Count() &&
+                        KillableBarrel(barrel))
+                    {
+                        Q.CastOnUnit(barrel);
+                    }
+                    else
+                    {
+                        foreach (var m in
+                            minis.Where(e => Q.GetDamage(e) + ItemHandler.GetSheenDmg(e) <= e.Health && e.Health > 3)
+                                .OrderBy(t => t.Distance(player))
+                                .ThenByDescending(t => t.Health))
+                        {
+                            orbwalker.ForceTarget(m);
+                            return;
+                        }
+                    }
+                }
+                else if (Q.IsReady() && config.Item("useqLCQB", true).GetValue<bool>() && KillableBarrel(barrel) &&
+                         minis.Count >= config.Item("eMinHit", true).GetValue<Slider>().Value)
+                {
+                    Q.CastOnUnit(barrel);
+                }
+
+                return;
             }
+
             if (config.Item("useqLC", true).GetValue<bool>() && !justE)
             {
                 Lasthit(config.Item("useqLCOOAA", true).GetValue<bool>());
@@ -1380,6 +1377,7 @@ namespace UnderratedAIO.Champions
             Menu menuLC = new Menu("LaneClear ", "Lcsettings");
             menuLC.AddItem(new MenuItem("useqLC", "Use Q", true)).SetValue(true);
             menuLC.AddItem(new MenuItem("useqLCOOAA", "   Only out of AA range", true)).SetValue(false);
+            menuLC.AddItem(new MenuItem("useqLCQB", "   On barrel", true)).SetValue(true);
             menuLC.AddItem(new MenuItem("useeLC", "Use E", true)).SetValue(true);
             menuLC.AddItem(new MenuItem("eMinHit", "   Min hit", true)).SetValue(new Slider(3, 1, 6));
             menuLC.AddItem(new MenuItem("eStacksLC", "   Keep stacks", true)).SetValue(new Slider(0, 0, 5));
