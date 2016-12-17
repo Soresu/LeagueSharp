@@ -93,10 +93,6 @@ namespace UnderratedAIO.Helpers
 
         private void CheckSkillShots()
         {
-            if (FpsBalancer.CheckCounter())
-            {
-                return;
-            }
             if (!skillShotChecked)
             {
                 skillShotChecked = true;

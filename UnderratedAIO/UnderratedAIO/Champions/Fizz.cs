@@ -75,6 +75,7 @@ namespace UnderratedAIO.Champions
             {
                 return;
             }
+
             switch (orbwalker.ActiveMode)
             {
                 case Orbwalking.OrbwalkingMode.Combo:
@@ -238,7 +239,7 @@ namespace UnderratedAIO.Champions
                 if (!OnTrident)
                 {
                     if (config.Item("useedmg", true).GetValue<bool>() &&
-                        data.ProjectileDamageTaken > target.GetAutoAttackDamage(player, true) + 10)
+                        data.DamageTaken > target.GetAutoAttackDamage(player, true) + 10)
                     {
                         E.Cast(enemyPred.CastPosition);
                     }
