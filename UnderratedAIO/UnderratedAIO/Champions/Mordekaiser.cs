@@ -258,11 +258,11 @@ namespace UnderratedAIO.Champions
             }
             if (config.Item("usewHLH", true).GetValue<bool>())
             {
-                LasthitW();
+                LasthitW(config.Item("usewHHeroPrior", true).GetValue<bool>());
             }
         }
 
-        private void LasthitW()
+        private void LasthitW(bool prior)
         {
             if (!W.IsReady())
             {
@@ -318,8 +318,7 @@ namespace UnderratedAIO.Champions
                             .OrderByDescending(m => m.Distance(player))
                             .Where(m => m.Health - W.GetDamage(m) < 0);
                     if (minions.Any() &&
-                        (!config.Item("usewHHeroPrior", true).GetValue<bool>() ||
-                         allyW.CountEnemiesInRange(allyW.MaxHealth > 749 ? 300 : wWidth) == 0))
+                        (!prior || allyW.CountEnemiesInRange(allyW.MaxHealth > 749 ? 300 : wWidth) == 0))
                     {
                         W.Cast();
                     }
@@ -383,7 +382,7 @@ namespace UnderratedAIO.Champions
             }
             if (config.Item("usewLCHLH", true).GetValue<bool>() && !wActive)
             {
-                LasthitW();
+                LasthitW(false);
             }
         }
 
